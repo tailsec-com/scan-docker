@@ -10,7 +10,7 @@
     "tailsec-scan-docker": "./src/cli.ts"
   },
   "scripts": {
-    "test": "cd /Users/mark/Projects/Tailsec && npx vitest run --config packages/scan-docker/vitest.config.ts",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "typecheck": "tsc --noEmit"
   },
   "engines": {
@@ -28,9 +28,12 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^29.5.14",
-    "@types/node": "^20.19.41",
+    "@types/glob": "^8.1.0",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "glob": "^11.0.0",
     "jest": "^29.7.0",
-    "typescript": "^5.9.3"
+    "ts-jest": "^29.4.9",
+    "typescript": "^5.0.0"
   }
 }
