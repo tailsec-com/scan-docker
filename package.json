@@ -1,0 +1,36 @@
+{
+  "name": "@tailsec/scan-docker",
+  "version": "0.1.0",
+  "description": "Security scanner for Dockerfiles",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "bin": {
+    "tailsec-scan-docker": "./src/cli.ts"
+  },
+  "scripts": {
+    "test": "cd /Users/mark/Projects/Tailsec && npx vitest run --config packages/scan-docker/vitest.config.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tailsec-com/scan-docker"
+  },
+  "keywords": [
+    "security",
+    "docker",
+    "dockerfile",
+    "scanner"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.19.41",
+    "jest": "^29.7.0",
+    "typescript": "^5.9.3"
+  }
+}
