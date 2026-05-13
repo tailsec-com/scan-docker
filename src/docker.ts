@@ -8,6 +8,18 @@ export interface DockerFinding {
   advice: string[];
 }
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+export function isBinaryFile(content: Buffer): boolean {
+  if (content.length === 0) return true;
+  if (content.length < 4) return false;
+  const checkLen = Math.min(content.length, 8192);
+  for (let i = 0; i < checkLen; i++) {
+    if (content[i] === 0) return true;
+  }
+  return false;
+}
+
 const DOCKER_RULES = [
   { id: 'docker-apt-no-cache', severity: 'low', title: 'apt-get without --no-install-recommends or cleanup',
     pattern: /apt-get\s+install(?!.*--no-install-recommends)/ },
@@ -39,6 +51,12 @@ const DOCKER_RULES = [
     pattern: /COPY\s+--from=(?:builder|build)/i },
   { id: 'docker-wget-sh', severity: 'medium', title: 'Use wget or curl with --no-check-certificate',
     pattern: /wget\s+.*--no-check-certificate|curl\s+.*--insecure/ },
+  { id: 'docker-copy-not-add', severity: 'low', title: 'COPY used for remote URL instead of ADD',
+    pattern: /ADD\s+https?:\/\// },
+  { id: 'docker-user-not-root', severity: 'info', title: 'Container runs as non-root user',
+    pattern: /USER\s+(?!root\b)/i },
+  { id: 'docker-expose-weak', severity: 'low', title: 'EXPOSE without proper justification comment',
+    pattern: /EXPOSE\s+[0-9]+\s*(?:#[^\n]*)?\s*(?:\n(?!.*HEALTHCHECK)|$)/ },
 ];
 
 export function scanDockerfile(content: string): DockerFinding[] {
@@ -99,6 +117,9 @@ function getAdvice(ruleId: string): string[] {
     'docker-sudo': ['Avoid sudo; run commands as non-root user'],
     'docker-copy-from-root': ['Ensure COPY --from stages run as non-root user'],
     'docker-wget-sh': ['Validate SSL certificates instead of disabling verification'],
+    'docker-copy-not-add': ['Use COPY for remote URLs instead of ADD for clarity'],
+    'docker-user-not-root': ['Verify non-root user has appropriate permissions for the workload'],
+    'docker-expose-weak': ['Document why the port is exposed or use descriptive comments'],
   };
   return advice[ruleId] || ['Review this Dockerfile instruction for security concerns'];
 }

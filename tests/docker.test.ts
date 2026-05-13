@@ -172,4 +172,42 @@ describe('Dockerfile security scanner', () => {
       expect(ids).not.toContain('docker-no-healthcheck');
     });
   });
+
+  describe('docker-copy-not-add', () => {
+    it('should detect ADD with http URL', () => {
+      const dockerfile = 'ADD https://example.com/file.tar /app/';
+      const findings = scanDockerfile(dockerfile);
+      expect(findings).toContainEqual(expect.objectContaining({ ruleId: 'docker-copy-not-add' }));
+    });
+
+    it('should not flag COPY with http URL', () => {
+      const dockerfile = 'COPY https://example.com/file.tar /app/';
+      const findings = scanDockerfile(dockerfile);
+      const ids = findings.map(f => f.ruleId);
+      expect(ids).not.toContain('docker-copy-not-add');
+    });
+  });
+
+  describe('docker-user-not-root', () => {
+    it('should detect non-root USER directive', () => {
+      const dockerfile = 'FROM node:18\nUSER node';
+      const findings = scanDockerfile(dockerfile);
+      expect(findings).toContainEqual(expect.objectContaining({ ruleId: 'docker-user-not-root' }));
+    });
+
+    it('should not flag USER root', () => {
+      const dockerfile = 'USER root';
+      const findings = scanDockerfile(dockerfile);
+      const ids = findings.map(f => f.ruleId);
+      expect(ids).not.toContain('docker-user-not-root');
+    });
+  });
+
+  describe('docker-expose-weak', () => {
+    it('should detect EXPOSE without comment', () => {
+      const dockerfile = 'FROM node:18\nEXPOSE 3000';
+      const findings = scanDockerfile(dockerfile);
+      expect(findings).toContainEqual(expect.objectContaining({ ruleId: 'docker-expose-weak' }));
+    });
+  });
 });
