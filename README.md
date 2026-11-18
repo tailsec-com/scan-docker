@@ -100,3 +100,5 @@ Also update the `getAdvice()` function with remediation steps for the new rule.
 ## License
 
 MIT
+
+[![advertisement](https://ads.servead.net/i/b9a8de23-fc13-424f-b7e8-e941a8e6e050.svg)](https://ads.servead.net/c/b9a8de23-fc13-424f-b7e8-e941a8e6e050)
